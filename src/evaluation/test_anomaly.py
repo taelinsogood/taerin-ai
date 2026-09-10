@@ -1,5 +1,12 @@
+import os
+import sys
+
 import joblib
 import pandas as pd
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from db import get_connection
 
 
 # =========================================================
@@ -163,8 +170,6 @@ print(
     ),
     "℃"
 )
-
-from db import get_connection
 
 # =========================================================
 # 9. 실제 운영 이벤트 조회

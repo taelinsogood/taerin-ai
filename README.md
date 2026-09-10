@@ -56,20 +56,20 @@ Pipeline(파이프라인)은
 현재 프로젝트의 파이프라인은 다음과 같습니다.
 
 ```text
-generate_data.py
+data/generate_data.py
         ↓
 PostgreSQL
         ↓
-prepare_dataset.py
+data/prepare_dataset.py
         ↓
 normal_dataset.csv
 event_dataset.csv
         ↓
-train_model.py
+training/train_rf.py
         ↓
 temperature_rf.joblib
         ↓
-test_anomaly.py
+evaluation/test_anomaly.py
         ↓
 이상 감지
 ```
@@ -92,12 +92,18 @@ taerin-ai/
 │
 ├── src/
 │   ├── db.py
-│   ├── generate_data.py
-│   ├── prepare_dataset.py
-│   ├── train_model.py
-│   ├── test_anomaly.py
-│   ├── test_db.py
-│   └── train_baseline.py
+│   │
+│   ├── data/
+│   │   ├── generate_data.py
+│   │   └── prepare_dataset.py
+│   │
+│   ├── training/
+│   │   └── train_rf.py
+│   │
+│   ├── prediction/
+│   │
+│   └── evaluation/
+│       └── test_anomaly.py
 │
 ├── .env
 ├── .gitignore
@@ -133,7 +139,7 @@ PostgreSQL 연결
 
 ---
 
-## `generate_data.py`
+## `data/generate_data.py`
 
 ### 역할
 
@@ -189,7 +195,7 @@ COOLING_OFF
 
 ---
 
-## `prepare_dataset.py`
+## `data/prepare_dataset.py`
 
 ### 역할
 
@@ -282,7 +288,7 @@ data/event_dataset.csv
 
 ---
 
-## `train_model.py`
+## `training/train_rf.py`
 
 ### 역할
 
@@ -366,7 +372,7 @@ RMSE : 0.0310℃
 
 ---
 
-## `test_anomaly.py`
+## `evaluation/test_anomaly.py`
 
 ### 역할
 
@@ -400,29 +406,6 @@ AI 예상 : 27.5℃
 ```
 
 현재는 PoC를 위해 임시 임계값을 사용할 수 있지만, 최종적으로는 정상 데이터의 예측 오차 분포 등을 분석하여 이상 판단 기준을 결정해야 합니다.
-
----
-
-## `test_db.py`
-
-초기에 Python에서 PostgreSQL 연결이 정상적으로 되는지 확인하기 위해 만든 테스트 파일입니다.
-
-현재 `db.py`를 통한 DB 연결이 정상적으로 동작하므로 추후 제거 가능한 파일입니다.
-
----
-
-## `train_baseline.py`
-
-프로젝트 초기에 RandomForest가 정상적으로 학습되는지 확인하기 위해 만든 **초기 실험용 모델**입니다.
-
-초기 결과:
-
-```text
-테스트 데이터 : 1,728개
-MAE           : 약 0.1061℃
-```
-
-현재는 `prepare_dataset.py + train_model.py` 구조로 개선했으므로 추후 제거 가능한 파일입니다.
 
 ---
 
@@ -569,7 +552,7 @@ LLM
         ┌────────────┴────────────┐
         │                         │
         ▼                         ▼
-generate_data.py          prepare_dataset.py
+data/generate_data.py     data/prepare_dataset.py
         │                         │
         │ 테스트 데이터           │ Feature 생성
         │ DB 저장                 │ 정상/이벤트 분리
@@ -581,14 +564,14 @@ generate_data.py          prepare_dataset.py
        normal_dataset.csv     event_dataset.csv
                   │                     │
                   ▼                     │
-           train_model.py               │
+        training/train_rf.py           │
                   │                     │
                   ▼                     │
       temperature_rf.joblib             │
                   │                     │
                   └──────────┬──────────┘
                              ▼
-                     test_anomaly.py
+                evaluation/test_anomaly.py
                              │
                              ▼
                    예측값 ↔ 실제값 비교
